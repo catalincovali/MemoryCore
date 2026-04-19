@@ -46,12 +46,14 @@ class MainActivity : ComponentActivity() {
                                 onGameOver = {
                                     games = games + listOf(currentSequence)
                                     currentSequence = emptyList()
-                                    navController.navigate("gamelist")
+                                    navController.navigate("gamelist") {
+                                        launchSingleTop = true
+                                    }
                                 }
                             )
                         }
                         composable("gamelist") {
-                            GameList()
+                            GameList(games = games)
                         }
                     }
                 }

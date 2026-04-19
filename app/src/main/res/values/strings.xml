@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Memory Core</string>
+    <string name="clear_button">Clear</string>
+    <string name="end_game_button">End Game</string>
 </resources>

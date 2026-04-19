@@ -6,8 +6,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,11 +24,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.catalincovali.memorycore.ui.theme.*
-
 
 
 val colors = listOf(
@@ -35,12 +42,14 @@ val colors = listOf(
     "Y" to ColorYellow,
     "C" to ColorCyan
 )
+
 @Composable
 fun GameScreen(
     sequence: List<String>,
     onAdd: (String) -> Unit,
     onClear: () -> Unit,
-    onGameOver: () -> Unit) {
+    onGameOver: () -> Unit
+) {
 
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -48,7 +57,8 @@ fun GameScreen(
         Row(
             Modifier
                 .fillMaxHeight()
-                .padding(8.dp)
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             ColorGrid(
                 colors,
@@ -60,17 +70,18 @@ fun GameScreen(
             Column(
                 Modifier
                     .weight(0.5f)
-                    .fillMaxHeight()
+                    .fillMaxHeight(),
             ) {
                 SequenceText(
                     modifier = Modifier
-                        //.weight(5f)
+                        .weight(7f)
                         .fillMaxWidth(),
                     sequence = sequence.joinToString(", ")
+
                 )
                 ActionButtons(
                     modifier = Modifier
-                        //.weight(5f)
+                        .weight(3f)
                         .fillMaxWidth(),
                     onClear = onClear,
                     onEndGame = onGameOver
@@ -80,8 +91,9 @@ fun GameScreen(
     } else {
         Column(
             Modifier
-                .fillMaxSize()
-                .padding(8.dp)
+                .fillMaxHeight()
+                .padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             ColorGrid(
                 colors,
@@ -93,13 +105,14 @@ fun GameScreen(
             SequenceText(
                 modifier = Modifier
                     .weight(1.5f)
+                    .fillMaxHeight()
                     .fillMaxWidth(),
                 sequence = sequence.joinToString(", ")
             )
             ActionButtons(
                 modifier = Modifier
                     .weight(1.5f)
-                    .fillMaxWidth(),
+                    .fillMaxHeight(),
                 onClear = onClear,
                 onEndGame = onGameOver
             )
@@ -120,7 +133,6 @@ fun ColorGrid(
         colors.chunked(2).forEach { row ->
             Row(
                 modifier = Modifier
-                    .fillMaxSize()
                     .weight(1f),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -141,7 +153,12 @@ fun ColorGrid(
                             },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(letter, color = Color.White)
+                        Text(
+                            letter,
+                            color = Color.White,
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
                     }
                 }
             }
@@ -154,13 +171,19 @@ fun SequenceText(
     modifier: Modifier = Modifier,
     sequence: String
 ) {
-
-    Text(
-        text = sequence,
-        textAlign = TextAlign.Center,
-
-        modifier = modifier.padding(8.dp)
-    )
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant
+    ) {
+        Text(
+            text = sequence,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .padding(8.dp)
+                .verticalScroll(rememberScrollState())
+        )
+    }
 }
 
 @Composable
@@ -176,8 +199,8 @@ fun ActionButtons(
         ),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Button(onClick = onClear) { Text("Clear") }
-        Button(onClick = onEndGame) { Text("End game") }
+        Button(onClick = onClear) { Text(stringResource(R.string.clear_button)) }
+        Button(onClick = onEndGame) { Text(stringResource(R.string.end_game_button)) }
     }
 }
 
@@ -186,7 +209,28 @@ fun ActionButtons(
 fun GameScreenPreview() {
     MemoryCoreTheme {
         GameScreen(
-            sequence = listOf("R", "G", "B"),
+            sequence = listOf(
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "A",
+                "B",
+                "C",
+                "D",
+                "E"
+            ),
             onAdd = {},
             onClear = {},
             onGameOver = {}
@@ -199,7 +243,28 @@ fun GameScreenPreview() {
 fun GameScreenLandscapePreview() {
     MemoryCoreTheme {
         GameScreen(
-            sequence = listOf("R", "G", "B"),
+            sequence = listOf(
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "A",
+                "B",
+                "C",
+                "D",
+                "E"
+            ),
             onAdd = {},
             onClear = {},
             onGameOver = {}
