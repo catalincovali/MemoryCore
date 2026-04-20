@@ -1,6 +1,7 @@
 package com.catalincovali.memorycore
 
 import android.content.res.Configuration
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -10,7 +11,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
@@ -57,8 +61,8 @@ fun GameScreen(
         Row(
             Modifier
                 .fillMaxHeight()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(15.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ColorGrid(
                 colors,
@@ -93,7 +97,7 @@ fun GameScreen(
             Modifier
                 .fillMaxHeight()
                 .padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ColorGrid(
                 colors,
@@ -104,14 +108,14 @@ fun GameScreen(
             )
             SequenceText(
                 modifier = Modifier
-                    .weight(1.5f)
+                    .weight(2f)
                     .fillMaxHeight()
                     .fillMaxWidth(),
                 sequence = sequence.joinToString(", ")
             )
             ActionButtons(
                 modifier = Modifier
-                    .weight(1.5f)
+                    .weight(1f)
                     .fillMaxHeight(),
                 onClear = onClear,
                 onEndGame = onGameOver
@@ -126,39 +130,55 @@ fun ColorGrid(
     modifier: Modifier = Modifier,
     onColorClick: (String) -> (Unit)
 ) {
-    Column(
+    Surface(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+
+        shadowElevation = 10.dp,
+        shape = RoundedCornerShape(38.dp),
+        color = MaterialTheme.colorScheme.surface,
     ) {
-        colors.chunked(2).forEach { row ->
-            Row(
-                modifier = Modifier
-                    .weight(1f),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                row.forEach { (letter, color) ->
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(color)
-                            .border(
-                                1.5.dp,
-                                Color.White.copy(alpha = 0.2f),
-                                RoundedCornerShape(12.dp)
+        Column(
+            modifier = Modifier
+                .padding(top = 15.dp, bottom = 15.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            colors.chunked(2).forEach { row ->
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 15.dp, end = 15.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    row.forEach { (letter, color) ->
+                        Surface(
+                            onClick = { onColorClick(letter) },
+                            modifier = Modifier
+                                //.padding(5.dp)
+                                .weight(1f)
+                                .fillMaxHeight(),
+                            shape = RoundedCornerShape(30.dp),
+                            color = color,
+                            shadowElevation = 7.dp,
+                            border = BorderStroke(
+                                5.dp,
+                                MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
                             )
-                            .clickable {
-                                onColorClick(letter)
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            letter,
-                            color = Color.White,
-                            fontSize = 28.sp,
-                            fontWeight = FontWeight.Bold,
-                        )
+                        ) {
+                            Text(
+                                text = letter,
+                                color = color.copy(
+                                    red = color.red * 0.8f,
+                                    green = color.green * 0.8f,
+                                    blue = color.blue * 0.8f,
+                                    alpha = color.alpha
+                                ),
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .padding(bottom = 16.dp, end = 20.dp)
+                                    .wrapContentSize(Alignment.BottomEnd)
+                            )
+                        }
                     }
                 }
             }
@@ -171,18 +191,33 @@ fun SequenceText(
     modifier: Modifier = Modifier,
     sequence: String
 ) {
+
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant
+        shape = RoundedCornerShape(30.dp),
+        color = MaterialTheme.colorScheme.surface,
+        shadowElevation = 15.dp,
+                border = BorderStroke(
+                3.dp,
+        MaterialTheme.colorScheme.background
+    )
     ) {
-        Text(
-            text = sequence,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .padding(8.dp)
-                .verticalScroll(rememberScrollState())
-        )
+        Column() {
+            Text(
+                text = "Sequence",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                modifier = Modifier.padding(start = 20.dp, top = 20.dp)
+            )
+            Text(
+
+                text = sequence,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(top = 10.dp, start = 20.dp, bottom = 20.dp, end = 12.dp)
+                    .verticalScroll(rememberScrollState())
+            )
+        }
     }
 }
 
@@ -199,8 +234,13 @@ fun ActionButtons(
         ),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Button(onClick = onClear) { Text(stringResource(R.string.clear_button)) }
-        Button(onClick = onEndGame) { Text(stringResource(R.string.end_game_button)) }
+        OutlinedButton(onClick = onClear) { Text(stringResource(R.string.clear_button)) }
+        Button(onClick = onEndGame) {
+            Text(
+                stringResource(R.string.end_game_button),
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
 

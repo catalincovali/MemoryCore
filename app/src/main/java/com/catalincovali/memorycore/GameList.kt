@@ -1,6 +1,8 @@
 package com.catalincovali.memorycore
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontFamily
@@ -29,42 +33,56 @@ fun GameList(
 ) {
     Column(modifier = modifier.fillMaxSize()) {
         Text(
-            text = "Games",
+            text = "Games (${games.size})",
             style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(16.dp)
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
         )
 
-        LazyColumn(modifier = modifier.fillMaxSize()) {
-            items(games) { game ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = game.size.toString(),
-                        modifier = Modifier.width(40.dp),
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold
 
-                    )
-                    Text(
-                        text = game.joinToString(", "),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+        if (games.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "No games yet",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                )
+            }
+        } else {
+            LazyColumn(modifier = modifier.fillMaxSize()) {
+                items(games) { game ->
+                    Row(
                         modifier = Modifier
-                            .weight(1f)
-                            .padding(start = 16.dp)
-                    )
-                }
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = game.size.toString(),
+                            modifier = Modifier.width(40.dp),
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold
 
+                        )
+                        Text(
+                            text = game.joinToString(", "),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 16.dp)
+                        )
+                    }
+
+                }
             }
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

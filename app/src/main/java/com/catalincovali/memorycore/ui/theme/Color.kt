@@ -2,18 +2,21 @@ package com.catalincovali.memorycore.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// ── Light ───────────────────────────────────────────────────
+val LightPrimary    = Color(0xFF455A64)
+val LightBackground = Color(0xFFF5F5F5)
+val LightSurface    = Color(0xFFFFFFFF)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// ── Dark ────────────────────────────────────────────────────
+val DarkPrimary     = Color(0xFFE5E5E5)
+//val DarkBackground  = Color(0xFF121212)
+val DarkBackground  = Color(0xFF282834)
+val DarkSurface     = Color(0xFF1E1E1E)
 
 // grid colors
-val ColorRed     = Color(0xFFEF9A9A)
-val ColorGreen   = Color(0xFFA5D6A7)
-val ColorBlue    = Color(0xFF90CAF9)
-val ColorMagenta = Color(0xFFCE93D8)
-val ColorYellow  = Color(0xFFFFEF96)
-val ColorCyan    = Color(0xFF80DEEA)
+val ColorRed     = Color(0xFFE57373)
+val ColorGreen   = Color(0xFF81C784)
+val ColorBlue    = Color(0xFF64B5F6)
+val ColorMagenta = Color(0xFFBA68C8)
+val ColorYellow  = Color(0xFFFFD54F)
+val ColorCyan    = Color(0xFF4DD0E1)
