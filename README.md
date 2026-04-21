@@ -1,4 +1,9 @@
-# Memory Core
+<div align="center">
+  <img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" width="100"/>
+  <h1>MemoryCore</h1>
+</div>
+
+---
 
 ## Dispositivo di sviluppo
 
