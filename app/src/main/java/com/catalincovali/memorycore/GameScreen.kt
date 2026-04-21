@@ -2,34 +2,25 @@ package com.catalincovali.memorycore
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,6 +37,7 @@ val colors = listOf(
     "Y" to ColorYellow,
     "C" to ColorCyan
 )
+
 
 @Composable
 fun GameScreen(
@@ -80,15 +72,14 @@ fun GameScreen(
                     modifier = Modifier
                         .weight(7f)
                         .fillMaxWidth(),
-                    sequence = sequence.joinToString(", ")
-
+                    sequence = sequence.joinToString(", "),
                 )
                 ActionButtons(
                     modifier = Modifier
                         .weight(3f)
                         .fillMaxWidth(),
                     onClear = onClear,
-                    onEndGame = onGameOver
+                    onEndGame = onGameOver,
                 )
             }
         }
@@ -128,15 +119,16 @@ fun GameScreen(
 fun ColorGrid(
     colors: List<Pair<String, Color>>,
     modifier: Modifier = Modifier,
-    onColorClick: (String) -> (Unit)
+    onColorClick: (String) -> (Unit),
 ) {
     Surface(
         modifier = modifier,
 
-        shadowElevation = 10.dp,
+        shadowElevation = 5.dp,
         shape = RoundedCornerShape(38.dp),
         color = MaterialTheme.colorScheme.surface,
     ) {
+        val haptics = LocalHapticFeedback.current
         Column(
             modifier = Modifier
                 .padding(top = 15.dp, bottom = 15.dp),
@@ -151,17 +143,19 @@ fun ColorGrid(
                 ) {
                     row.forEach { (letter, color) ->
                         Surface(
-                            onClick = { onColorClick(letter) },
+                            onClick = {
+                                onColorClick(letter)
+                                haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+                            },
                             modifier = Modifier
-                                //.padding(5.dp)
                                 .weight(1f)
                                 .fillMaxHeight(),
                             shape = RoundedCornerShape(30.dp),
                             color = color,
-                            shadowElevation = 7.dp,
+                            shadowElevation = 10.dp,
                             border = BorderStroke(
-                                5.dp,
-                                MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
+                                3.dp,
+                                MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
                             )
                         ) {
                             Text(
@@ -189,28 +183,26 @@ fun ColorGrid(
 @Composable
 fun SequenceText(
     modifier: Modifier = Modifier,
-    sequence: String
+    sequence: String,
 ) {
-
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(30.dp),
         color = MaterialTheme.colorScheme.surface,
-        shadowElevation = 15.dp,
-                border = BorderStroke(
-                3.dp,
-        MaterialTheme.colorScheme.background
-    )
+        shadowElevation = 10.dp,
+        border = BorderStroke(
+            3.dp,
+            MaterialTheme.colorScheme.background
+        )
     ) {
-        Column() {
+        Column {
             Text(
-                text = "Sequence",
+                stringResource(R.string.sequence_label),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
                 modifier = Modifier.padding(start = 20.dp, top = 20.dp)
             )
             Text(
-
                 text = sequence,
                 textAlign = TextAlign.Center,
                 modifier = Modifier

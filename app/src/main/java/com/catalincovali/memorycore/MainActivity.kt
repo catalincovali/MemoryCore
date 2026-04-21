@@ -44,8 +44,7 @@ class MainActivity : ComponentActivity() {
                                     currentSequence = emptyList()
                                 },
                                 onGameOver = {
-                                    if(currentSequence.isNotEmpty())
-                                        games = games + listOf(currentSequence)
+                                    games = games + listOf(currentSequence)
                                     currentSequence = emptyList()
                                     navController.navigate("gamelist") {
                                         launchSingleTop = true

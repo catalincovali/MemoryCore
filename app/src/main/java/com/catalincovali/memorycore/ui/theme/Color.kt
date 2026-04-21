@@ -10,8 +10,8 @@ val LightSurface    = Color(0xFFFFFFFF)
 // ── Dark ────────────────────────────────────────────────────
 val DarkPrimary     = Color(0xFFE5E5E5)
 //val DarkBackground  = Color(0xFF121212)
-val DarkBackground  = Color(0xFF282834)
-val DarkSurface     = Color(0xFF1E1E1E)
+val DarkBackground  = Color(0xFF2B3034)
+val DarkSurface     = Color(0xFF1E2628)
 
 // grid colors
 val ColorRed     = Color(0xFFE57373)
