@@ -3,8 +3,6 @@
   <h1>MemoryCore</h1>
 </div>
 
----
-
 ## Dispositivo di sviluppo
 
 - Emulatore: Pixel 2
