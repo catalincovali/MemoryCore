@@ -33,7 +33,7 @@ fun GameList(
 ) {
     Surface(
         modifier = modifier
-            .padding(15.dp),
+            .padding(8.dp),
         shape = RoundedCornerShape(30.dp),
         color = MaterialTheme.colorScheme.surface,
         shadowElevation = 10.dp,
@@ -64,18 +64,19 @@ fun GameList(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(start = 15.dp, end = 20.dp),
+                                .padding(start = 12.dp, end = 18.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "(${index + 1})",
+                                text = "${(index + 1).toString().padStart(2, '0')}.",
+                                textAlign = TextAlign.Center,
                                 modifier = Modifier.width(40.dp),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                             )
                             Text(
-                                text = game.size.toString(),
+                                text = game.size.toString().padStart(2, '0'),
                                 modifier = Modifier.width(40.dp),
                                 textAlign = TextAlign.Center,
                                 fontWeight = FontWeight.Bold

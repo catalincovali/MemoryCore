@@ -9,3 +9,6 @@
 - API Level: Level 34 (Android 14)
 - Services: Google  APIs
 - ABI: arm64-v8a
+
+## Problemi 
+- Premendo rapidamente il pulsante `End Game`, potrebbero essere salvate più partite vuote.

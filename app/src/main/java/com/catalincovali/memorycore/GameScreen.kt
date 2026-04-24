@@ -2,7 +2,6 @@ package com.catalincovali.memorycore
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
@@ -17,9 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,7 +34,6 @@ val colors = listOf(
     "Y" to ColorYellow,
     "C" to ColorCyan
 )
-
 
 @Composable
 fun GameScreen(
@@ -72,7 +68,7 @@ fun GameScreen(
                     modifier = Modifier
                         .weight(7f)
                         .fillMaxWidth(),
-                    sequence = sequence.joinToString(", "),
+                    sequence = sequence
                 )
                 ActionButtons(
                     modifier = Modifier
@@ -102,7 +98,7 @@ fun GameScreen(
                     .weight(2f)
                     .fillMaxHeight()
                     .fillMaxWidth(),
-                sequence = sequence.joinToString(", ")
+                sequence = sequence
             )
             ActionButtons(
                 modifier = Modifier
@@ -123,12 +119,10 @@ fun ColorGrid(
 ) {
     Surface(
         modifier = modifier,
-
         shadowElevation = 5.dp,
         shape = RoundedCornerShape(38.dp),
         color = MaterialTheme.colorScheme.surface,
     ) {
-        val haptics = LocalHapticFeedback.current
         Column(
             modifier = Modifier
                 .padding(top = 15.dp, bottom = 15.dp),
@@ -145,7 +139,6 @@ fun ColorGrid(
                         Surface(
                             onClick = {
                                 onColorClick(letter)
-                                haptics.performHapticFeedback(HapticFeedbackType.Confirm)
                             },
                             modifier = Modifier
                                 .weight(1f)
@@ -157,6 +150,7 @@ fun ColorGrid(
                                 3.dp,
                                 MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
                             )
+
                         ) {
                             Text(
                                 text = letter,
@@ -183,7 +177,7 @@ fun ColorGrid(
 @Composable
 fun SequenceText(
     modifier: Modifier = Modifier,
-    sequence: String,
+    sequence: List<String>,
 ) {
     Surface(
         modifier = modifier,
@@ -196,16 +190,29 @@ fun SequenceText(
         )
     ) {
         Column {
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    stringResource(R.string.sequence_label),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                    modifier = Modifier.padding(start = 20.dp, top = 20.dp)
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Text(
+                    text = "${sequence.size}",
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.padding(end = 20.dp, top = 20.dp),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                )
+            }
             Text(
-                stringResource(R.string.sequence_label),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
-                modifier = Modifier.padding(start = 20.dp, top = 20.dp)
-            )
-            Text(
-                text = sequence,
+                text = sequence.joinToString(", "),
                 textAlign = TextAlign.Center,
-                modifier = Modifier
+                modifier = modifier
                     .padding(top = 10.dp, start = 20.dp, bottom = 20.dp, end = 12.dp)
                     .verticalScroll(rememberScrollState())
             )
