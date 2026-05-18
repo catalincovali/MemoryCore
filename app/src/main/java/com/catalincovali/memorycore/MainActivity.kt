@@ -7,11 +7,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -23,10 +25,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MemoryCoreTheme {
+
+                val viewModel: GameViewModel = viewModel()
+                val uiState by viewModel.uiState.collectAsState()
+                val games by viewModel.games.collectAsState()
+
+
+
                 val navController = rememberNavController()
 
                 var currentSequence by rememberSaveable { mutableStateOf(listOf<String>()) }
-                var games by rememberSaveable { mutableStateOf(listOf<List<String>>()) }
 
 
                     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -43,7 +51,7 @@ class MainActivity : ComponentActivity() {
                                     currentSequence = emptyList()
                                 },
                                 onGameOver = {
-                                    games = games + listOf(currentSequence)
+                                    //games = games + listOf(currentSequence)
                                     currentSequence = emptyList()
 
                                     navController.navigate("gamelist") {
