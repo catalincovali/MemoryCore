@@ -7,16 +7,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.catalincovali.memorycore.ui.theme.MemoryCoreTheme
 
 class MainActivity : ComponentActivity() {
@@ -31,37 +31,52 @@ class MainActivity : ComponentActivity() {
                 val games by viewModel.games.collectAsState()
 
 
-
                 val navController = rememberNavController()
 
-                var currentSequence by rememberSaveable { mutableStateOf(listOf<String>()) }
+                NavHost(
+                    navController = navController,
+                    startDestination = "gamelist",
+                ) {
+                    composable("gamelist") {
+                        GameList(
+                            games = games,
+                            onStartGame = {
+                                viewModel.resetGame()
+                                navController.navigate("game")
+                            },
+                            onGameClick = { gameId ->
+                                navController.navigate("detail/$gameId")
+                            }
 
-
-                    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    NavHost(
-                        navController = navController,
-                        startDestination = "game",
-                        modifier = Modifier.padding(innerPadding)
-                    ) {
-                        composable("game") {
-                            GameScreen(
-                                sequence = currentSequence,
-                                onAdd = { letter -> currentSequence = currentSequence + letter },
-                                onClear = {
-                                    currentSequence = emptyList()
-                                },
-                                onGameOver = {
-                                    //games = games + listOf(currentSequence)
-                                    currentSequence = emptyList()
-
-                                    navController.navigate("gamelist") {
-                                        launchSingleTop = true // TODO: sistema il salvataggio multiplo di partite vuote
-                                    }
-                                }
-                            )
-                        }
-                        composable("gamelist") {
-                            GameList(games = games)
+                        )
+                    }
+                    composable("game") {
+                        GameScreen(
+                            uiState = uiState,
+                            onColorPressed = viewModel::onColorPressed,
+                            onStart = viewModel::startGame,
+                            onPauseResume = viewModel::togglePauseResume,
+                            onTerminate = viewModel::terminateGame,
+                            onNavigateBack = {
+                                navController.popBackStack()
+                            }
+                        )
+                    }
+                    composable(
+                        route = "detail/{gameId}",
+                        arguments = listOf(
+                            navArgument("gameId") { type = NavType.LongType }
+                        )
+                    ) { backStackEntry ->
+                        val gameId =
+                            backStackEntry.arguments?.getLong("gameId") ?: return@composable
+                        val game = games.find { it.id == gameId }
+                        if (game != null) {
+                            GameDetail(game = game)
+                        } else {
+                            LaunchedEffect(Unit) {
+                                navController.popBackStack()
+                            }
                         }
                     }
                 }

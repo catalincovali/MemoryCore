@@ -9,8 +9,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
+import androidx.activity.compose.BackHandler
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,24 +26,31 @@ import androidx.compose.ui.unit.sp
 import com.catalincovali.memorycore.ui.theme.*
 
 
-val colors = listOf(
-    "R" to ColorRed,
-    "G" to ColorGreen,
-    "B" to ColorBlue,
-    "M" to ColorMagenta,
-    "Y" to ColorYellow,
-    "C" to ColorCyan
-)
-
 @Composable
 fun GameScreen(
-    sequence: List<String>,
-    onAdd: (String) -> Unit,
-    onClear: () -> Unit,
-    onGameOver: () -> Unit
+    uiState: GameUiState,
+    onColorPressed: (String) -> Unit,
+    onStart: () -> Unit,
+    onPauseResume: () -> Unit,
+    onTerminate: () -> Unit,
+    onNavigateBack: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    val displayedSequence: List<String> = when (uiState.phase) {
+        GamePhase.PLAYER_TURN -> uiState.playerInput
+        GamePhase.GAME_OVER -> uiState.computerSequence
+        else -> emptyList()
+    }
+
+    BackHandler(enabled = uiState.phase != GamePhase.IDLE) {
+        if (uiState.phase != GamePhase.GAME_OVER) {
+            onTerminate()
+        }
+        onNavigateBack()
+    }
 
     if (isLandscape) {
         Row(
@@ -53,11 +60,13 @@ fun GameScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ColorGrid(
-                colors,
+                colors = COLORS,
+                highlighted = uiState.highlightedColor,
+                enabled = uiState.phase == GamePhase.PLAYER_TURN,
+                onColorClick = onColorPressed,
                 modifier = Modifier
                     .weight(0.5f)
-                    .fillMaxHeight(),
-                onColorClick = onAdd
+                    .fillMaxHeight()
             )
             Column(
                 Modifier
@@ -68,15 +77,20 @@ fun GameScreen(
                     modifier = Modifier
                         .weight(7f)
                         .fillMaxWidth(),
-                    sequence = sequence
+                    sequence = displayedSequence
                 )
-                ActionButtons(
+
+                GameControls(
+                    phase = uiState.phase,
+                    onStart = onStart,
+                    onPauseResume = onPauseResume,
+                    onTerminate = onTerminate,
                     modifier = Modifier
                         .weight(3f)
-                        .fillMaxWidth(),
-                    onClear = onClear,
-                    onEndGame = onGameOver,
+                        .fillMaxWidth()
                 )
+
+
             }
         }
     } else {
@@ -87,33 +101,82 @@ fun GameScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ColorGrid(
-                colors,
+                colors = COLORS,
+                highlighted = uiState.highlightedColor,
+                enabled = uiState.phase == GamePhase.PLAYER_TURN,
+                onColorClick = onColorPressed,
                 modifier = Modifier
                     .weight(7f)
                     .fillMaxWidth(),
-                onColorClick = onAdd
             )
             SequenceText(
                 modifier = Modifier
                     .weight(2f)
                     .fillMaxHeight()
                     .fillMaxWidth(),
-                sequence = sequence
+                sequence = displayedSequence
             )
-            ActionButtons(
+            GameControls(
+                phase = uiState.phase,
+                onStart = onStart,
+                onPauseResume = onPauseResume,
+                onTerminate = onTerminate,
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxHeight(),
-                onClear = onClear,
-                onEndGame = onGameOver
+                    .fillMaxWidth()
             )
+
+
         }
     }
 }
 
 @Composable
+fun GameControls(
+    phase: GamePhase,
+    onStart: () -> Unit,
+    onPauseResume: () -> Unit,
+    onTerminate: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(
+            12.dp,
+            Alignment.CenterHorizontally
+        ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Button(
+            onClick = onStart,
+            enabled = phase == GamePhase.IDLE
+        ) { Text(stringResource(R.string.start_button)) }
+
+        val pauseLabel = if (phase == GamePhase.PAUSED)
+            R.string.resume_button
+        else
+            R.string.pause_button
+        Button(
+            onClick = onPauseResume,
+            enabled = phase == GamePhase.COMPUTER_TURN || phase ==
+                    GamePhase.PAUSED
+        ) { Text(stringResource(pauseLabel)) }
+
+        Button(
+            onClick = onTerminate,
+            enabled = phase != GamePhase.IDLE && phase !=
+                    GamePhase.GAME_OVER
+        ) { Text(stringResource(R.string.end_button)) }
+
+    }
+}
+
+
+@Composable
 fun ColorGrid(
     colors: List<Pair<String, Color>>,
+    highlighted: String? = null,
+    enabled: Boolean,
     modifier: Modifier = Modifier,
     onColorClick: (String) -> (Unit),
 ) {
@@ -140,6 +203,7 @@ fun ColorGrid(
                             onClick = {
                                 onColorClick(letter)
                             },
+                            enabled = enabled,
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight(),
@@ -147,9 +211,13 @@ fun ColorGrid(
                             color = color,
                             shadowElevation = 10.dp,
                             border = BorderStroke(
-                                3.dp,
-                                MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
+                                width = if (letter == highlighted) 8.dp else 3.dp,
+                                color = if (letter == highlighted)
+                                    MaterialTheme.colorScheme.onSurface
+                                else
+                                    MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
                             )
+
 
                         ) {
                             Text(
@@ -220,93 +288,46 @@ fun SequenceText(
     }
 }
 
-@Composable
-fun ActionButtons(
-    modifier: Modifier = Modifier,
-    onClear: () -> Unit,
-    onEndGame: () -> Unit
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(
-            16.dp, Alignment.CenterHorizontally
-        ),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        OutlinedButton(onClick = onClear) { Text(stringResource(R.string.clear_button)) }
-        Button(onClick = onEndGame) {
-            Text(
-                stringResource(R.string.end_game_button),
-                fontWeight = FontWeight.Bold
-            )
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
-fun GameScreenPreview() {
+fun GameScreenPlayerTurnPreview() {
     MemoryCoreTheme {
         GameScreen(
-            sequence = listOf(
-                "A",
-                "B",
-                "C",
-                "D",
-                "E",
-                "A",
-                "B",
-                "C",
-                "D",
-                "E",
-                "A",
-                "B",
-                "C",
-                "D",
-                "E",
-                "A",
-                "B",
-                "C",
-                "D",
-                "E"
+            uiState = GameUiState(
+                phase = GamePhase.PLAYER_TURN,
+                computerSequence = listOf("R", "G", "B", "Y"),
+                playerInput = listOf("R", "G"),
             ),
-            onAdd = {},
-            onClear = {},
-            onGameOver = {}
+            onColorPressed = {},
+            onStart = {},
+            onPauseResume = {},
+            onTerminate = {},
+            onNavigateBack = {}
         )
     }
 }
 
-@Preview(showBackground = true, widthDp = 640, heightDp = 360)
+@Preview(
+    name = "Landscape — computer turn",
+    showBackground = true,
+    widthDp = 720,
+    heightDp = 360
+)
 @Composable
-fun GameScreenLandscapePreview() {
+fun GameScreenComputerTurnPreview() {
     MemoryCoreTheme {
         GameScreen(
-            sequence = listOf(
-                "A",
-                "B",
-                "C",
-                "D",
-                "E",
-                "A",
-                "B",
-                "C",
-                "D",
-                "E",
-                "A",
-                "B",
-                "C",
-                "D",
-                "E",
-                "A",
-                "B",
-                "C",
-                "D",
-                "E"
+            uiState = GameUiState(
+                phase = GamePhase.COMPUTER_TURN,
+                computerSequence = listOf("R", "G", "B"),
+                highlightedColor = "G"
             ),
-            onAdd = {},
-            onClear = {},
-            onGameOver = {}
+            onColorPressed = {},
+            onStart = {},
+            onPauseResume = {},
+            onTerminate = {},
+            onNavigateBack = {}
         )
     }
 }

@@ -4,4 +4,9 @@
     <string name="end_game_button">Fine Partita</string>
     <string name="list_title">Partite</string>
     <string name="sequence_label">Sequenza</string>
+    <string name="start_button">Avvia partita</string>
+    <string name="pause_button">Pausa</string>
+    <string name="resume_button">Riprendi</string>
+    <string name="end_button">Fine partita</string>
+    <string name="detail_title">Details</string>
 </resources>

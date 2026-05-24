@@ -4,6 +4,11 @@
     <string name="end_game_button">End Game</string>
     <string name="list_title">Games</string>
     <string name="sequence_label">Sequence</string>
+    <string name="start_button">Start game</string>
+    <string name="pause_button">Pause</string>
+    <string name="resume_button">Resume</string>
+    <string name="end_button">End game</string>
+    <string name="detail_title">Details</string>
 
 
 </resources>
