@@ -8,5 +8,5 @@
     <string name="pause_button">Pausa</string>
     <string name="resume_button">Riprendi</string>
     <string name="end_button">Fine partita</string>
-    <string name="detail_title">Details</string>
+    <string name="detail_title">Dettaglio partita</string>
 </resources>

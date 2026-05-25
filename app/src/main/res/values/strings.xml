@@ -8,7 +8,7 @@
     <string name="pause_button">Pause</string>
     <string name="resume_button">Resume</string>
     <string name="end_button">End game</string>
-    <string name="detail_title">Details</string>
+    <string name="detail_title">Game Details</string>
 
 
 </resources>

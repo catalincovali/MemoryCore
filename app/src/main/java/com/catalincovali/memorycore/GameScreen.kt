@@ -178,7 +178,7 @@ fun ColorGrid(
     highlighted: String? = null,
     enabled: Boolean,
     modifier: Modifier = Modifier,
-    onColorClick: (String) -> (Unit),
+    onColorClick: (String) -> Unit,
 ) {
     Surface(
         modifier = modifier,
@@ -259,7 +259,7 @@ fun SequenceText(
     ) {
         Column {
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = modifier.fillMaxWidth()
             ) {
                 Text(
                     stringResource(R.string.sequence_label),
@@ -280,7 +280,7 @@ fun SequenceText(
             Text(
                 text = sequence.joinToString(", "),
                 textAlign = TextAlign.Center,
-                modifier = modifier
+                modifier = Modifier
                     .padding(top = 10.dp, start = 20.dp, bottom = 20.dp, end = 12.dp)
                     .verticalScroll(rememberScrollState())
             )

@@ -48,50 +48,47 @@ fun GameList(
                 icon = {
                     Text("▶")
                 },
-                text = { Text(stringResource(R.string.start_button)) }
+                text = { Text(stringResource(R.string.start_button)) },
+                        containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+
             )
         }
     ) { innerPadding ->
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(8.dp),
-            shape = RoundedCornerShape(30.dp),
-            color = MaterialTheme.colorScheme.surface,
-            shadowElevation = 10.dp,
-            border = BorderStroke(3.dp, MaterialTheme.colorScheme.background)
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
         ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                Text(
-                    text = "${stringResource(R.string.list_title)} (${games.size})",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
-                    modifier = Modifier.padding(start = 20.dp, top = 20.dp)
-                )
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 12.dp, bottom = 12.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(games) { game ->
-                        GameRow(
-                            game = game,
-                            onClick = { onGameClick(game.id) }
-                        )
-                    }
-
+            Text(
+                text = "${stringResource(R.string.list_title)} (${games.size})",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                modifier = Modifier.padding(start = 20.dp, bottom = 10.dp)
+            )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 12.dp, bottom = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(games) { game ->
+                    GameRow(
+                        game = game,
+                        onClick = { onGameClick(game.id) }
+                    )
                 }
+
             }
         }
     }
 }
 
 @Composable
-private fun GameRow(game: Game,
-                    onClick: () -> Unit,
-                    modifier: Modifier = Modifier) {
+private fun GameRow(
+    game: Game,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
