@@ -10,7 +10,7 @@ Variante del gioco Simon, progetto per il corso di Programmazione di Sistemi Emb
 <p align="center">
   <img src="screenshots/game_list.png" width="220"/>
   <img src="screenshots/game_screen.png" width="220"/>
-  <img src="screenshots/game_detais.png" width="220"/>
+  <img src="screenshots/game_details.png" width="220"/>
 </p>
 
 ## Dispositivo di sviluppo
