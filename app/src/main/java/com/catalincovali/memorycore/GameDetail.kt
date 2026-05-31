@@ -23,7 +23,9 @@ import androidx.compose.ui.unit.sp
 
 import com.catalincovali.memorycore.ui.theme.MemoryCoreTheme
 
-
+// dettagli di una singola partita
+// stessi stile della lista di partite ma con piu spazio per
+// leggere la stringa
 @Composable
 fun GameDetail(
     game: Game,

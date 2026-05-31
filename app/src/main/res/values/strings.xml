@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Memory Core</string>
-    <string name="clear_button">Clear</string>
     <string name="end_game_button">End Game</string>
     <string name="list_title">Games</string>
     <string name="sequence_label">Sequence</string>
@@ -9,6 +8,4 @@
     <string name="resume_button">Resume</string>
     <string name="end_button">End game</string>
     <string name="detail_title">Game Details</string>
-
-
 </resources>

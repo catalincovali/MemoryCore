@@ -13,6 +13,9 @@ import androidx.compose.material3.Surface
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.catalincovali.memorycore.ui.theme.*
 
-
+// schermata di gioco
 @Composable
 fun GameScreen(
     uiState: GameUiState,
@@ -37,21 +40,40 @@ fun GameScreen(
     modifier: Modifier = Modifier
 ) {
 
+    // un tono per ogni colore
+    val tonePlayer = remember { ToneFeedback() }
+    DisposableEffect(Unit) { onDispose { tonePlayer.release() } }
+    LaunchedEffect(uiState.highlightedColor) {
+        uiState.highlightedColor?.let { tonePlayer.play(it) }
+    }
+
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
+    // area di testo
+    // `PLAYER_TURN` - colori che ho gai premuto
+    // `GAME_OVER` - sequenza completa
+    // `COMPUTER_TURN` / `PAUSED` / `IDLE` - vuoto
     val displayedSequence: List<String> = when (uiState.phase) {
         GamePhase.PLAYER_TURN -> uiState.playerInput
         GamePhase.GAME_OVER -> uiState.computerSequence
         else -> emptyList()
     }
 
+    // back di sistema: in partita = termina + torna alla lista
     BackHandler(enabled = uiState.phase != GamePhase.IDLE) {
         if (uiState.phase != GamePhase.GAME_OVER) {
             onTerminate()
+        } else {
+            onNavigateBack()
         }
-        onNavigateBack()
+
     }
 
+    // il colore sbagliato che ha causato la fine partita
+    val errorLetter: String? =
+        if (uiState.phase == GamePhase.GAME_OVER) uiState.playerInput.lastOrNull() else null
+
+    // layout potrait/landscape
     if (isLandscape) {
         Row(
             Modifier
@@ -59,15 +81,18 @@ fun GameScreen(
                 .padding(15.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            // griglia colori a sinistra
             ColorGrid(
                 colors = COLORS,
                 highlighted = uiState.highlightedColor,
+                errorLetter = errorLetter,
                 enabled = uiState.phase == GamePhase.PLAYER_TURN,
                 onColorClick = onColorPressed,
                 modifier = Modifier
                     .weight(0.5f)
                     .fillMaxHeight()
             )
+            // colonna a destra (bottoni + sequenza testo)
             Column(
                 Modifier
                     .weight(0.5f)
@@ -100,9 +125,11 @@ fun GameScreen(
                 .padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            // griglia, testo, bottoni in colonna
             ColorGrid(
                 colors = COLORS,
                 highlighted = uiState.highlightedColor,
+                errorLetter = errorLetter,
                 enabled = uiState.phase == GamePhase.PLAYER_TURN,
                 onColorClick = onColorPressed,
                 modifier = Modifier
@@ -131,6 +158,10 @@ fun GameScreen(
     }
 }
 
+// 3 pulsanti
+// avvia            - solo in `IDLE
+// pausa/riprendi   - solo durante `COMPUTER_TURN`
+// fine             - escluso `IDLE` e `GAME_OVER`
 @Composable
 fun GameControls(
     phase: GamePhase,
@@ -176,6 +207,7 @@ fun GameControls(
 fun ColorGrid(
     colors: List<Pair<String, Color>>,
     highlighted: String? = null,
+    errorLetter: String? = null,
     enabled: Boolean,
     modifier: Modifier = Modifier,
     onColorClick: (String) -> Unit,
@@ -211,14 +243,13 @@ fun ColorGrid(
                             color = color,
                             shadowElevation = 10.dp,
                             border = BorderStroke(
-                                width = if (letter == highlighted) 8.dp else 3.dp,
-                                color = if (letter == highlighted)
-                                    MaterialTheme.colorScheme.onSurface
-                                else
-                                    MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
+                                width = if (letter == errorLetter) 5.dp else 3.dp,
+                                color = when {
+                                    letter == errorLetter -> MaterialTheme.colorScheme.error
+                                    letter == highlighted -> MaterialTheme.colorScheme.onSurface
+                                    else -> MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
+                                }
                             )
-
-
                         ) {
                             Text(
                                 text = letter,

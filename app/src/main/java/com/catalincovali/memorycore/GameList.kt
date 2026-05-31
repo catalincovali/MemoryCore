@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.catalincovali.memorycore.ui.theme.MemoryCoreTheme
 
 
+// lista partite, schermata iniziale dell'applicazione
 @Composable
 fun GameList(
     games: List<Game>,
@@ -59,12 +60,14 @@ fun GameList(
             .fillMaxSize()
             .padding(innerPadding)
         ) {
+            // header con il numero totale di partite tra parentesi
             Text(
                 text = "${stringResource(R.string.list_title)} (${games.size})",
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
                 modifier = Modifier.padding(start = 20.dp, bottom = 10.dp)
             )
+            // lista effettiva delle partite
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -83,6 +86,8 @@ fun GameList(
     }
 }
 
+//riga della lista
+//conteggio a sinistra, sequenza a destra con ellipsis
 @Composable
 private fun GameRow(
     game: Game,
@@ -126,6 +131,7 @@ internal fun buildErrorSequence(
     sequence.forEachIndexed { i, letter ->
         if (i > 0) append(", ")
         if (i >= errorIndex) {
+            // dall'errore in poi color di rosso
             withStyle(SpanStyle(color = errorColor)) { append(letter) }
         } else {
             append(letter)

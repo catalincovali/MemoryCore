@@ -7,6 +7,7 @@ import com.catalincovali.memorycore.data.GameRepository
 
 class MemoryCoreApp : Application() {
 
+    // apriamo il DB solo al prima accesso
     val database: AppDatabase by lazy {
         Room.databaseBuilder(
             applicationContext,

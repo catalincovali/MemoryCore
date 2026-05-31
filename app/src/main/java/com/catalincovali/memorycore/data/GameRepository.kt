@@ -4,6 +4,7 @@ import com.catalincovali.memorycore.Game
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+// Bridge entity - domain
 class GameRepository(private val dao: GameDao) {
 
     val games: Flow<List<Game>> = dao.observeAll()

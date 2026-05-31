@@ -61,7 +61,10 @@ class MainActivity : ComponentActivity() {
                                 onColorPressed = viewModel::onColorPressed,
                                 onStart = viewModel::startGame,
                                 onPauseResume = viewModel::togglePauseResume,
-                                onTerminate = viewModel::terminateGame,
+                                onTerminate = {
+                                    viewModel.terminateGame()
+                                    navController.popBackStack()
+                                },
                                 onNavigateBack = {
                                     navController.popBackStack()
                                 }

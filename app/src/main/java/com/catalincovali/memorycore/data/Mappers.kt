@@ -2,6 +2,7 @@ package com.catalincovali.memorycore.data
 
 import com.catalincovali.memorycore.Game
 
+
 fun GameEntity.toDomain(): Game = Game(
     id = id,
     maxCorrectLength = maxCorrectLength,
